@@ -27,7 +27,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor.git",
-    "mocha": "^5.2.0",
+    "mocha": "^8.3.0",
     "nodemon": "^2.0.6"
   }
 }

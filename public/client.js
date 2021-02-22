@@ -11,6 +11,7 @@ $(() => {
   `);
 
   var renderTodo = (todo) => {
+    console.log(todo);
     return template(todo);
   };
 
