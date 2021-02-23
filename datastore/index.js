@@ -7,9 +7,20 @@ var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
+// 1) should create a new file for each todo
+// 2) should use the generated unique id as the filename
+// 3) should only save todo text contents in file
+// ✓ should pass a todo object to the callback on success
+
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
+  // call counter but pass a callback function
+  //STORE: './data/'
+  counter.getNextUniqueId((err, id) => {
+    let fileName = `./data/${id}.txt`;
+  });
+  // var id = counter.getNextUniqueId();
+
+  // items[id] = text;
   callback(null, { id, text });
 };
 
