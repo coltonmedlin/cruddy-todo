@@ -42,13 +42,8 @@ exports.readOne = (id, callback) => {
   });
 };
 
-// ✓ should not change the counter
-// 1) should update the todo text for existing todo
-// ✓ should not create a new todo for non-existant id
-
 exports.update = (id, text, callback) => {
   let filePath = path.join(exports.dataDir, `${id}.txt`);
-  //USE FS STAT
   fs.stat(filePath, (err, stats) => {
     if (err) {
       callback(new Error(`No item with id: ${id}`));
@@ -64,15 +59,37 @@ exports.update = (id, text, callback) => {
   });
 };
 
+// ✓ should not change the counter
+// 1) should delete todo file by id
+// ✓ should return an error for non-existant id
+
+
+
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  let filePath = path.join(exports.dataDir, `${id}.txt`);
+  fs.stat(filePath, (err, stats) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          callback(new Error(`could not delete file with id: ${id}`));
+        } else {
+          callback();
+        }
+      });
+    }
+  });
+
+
+
+
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  //}
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
