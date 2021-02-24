@@ -32,9 +32,7 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  // zero path the id
   let filePath = path.join(exports.dataDir, `${id}.txt`);
-  // use fs.readFile with id path
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       callback(new Error(`No item with id: ${id}`));
@@ -44,14 +42,26 @@ exports.readOne = (id, callback) => {
   });
 };
 
+// ✓ should not change the counter
+// 1) should update the todo text for existing todo
+// ✓ should not create a new todo for non-existant id
+
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  let filePath = path.join(exports.dataDir, `${id}.txt`);
+  //USE FS STAT
+  fs.stat(filePath, (err, stats) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          throw ('error writing counter');
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
