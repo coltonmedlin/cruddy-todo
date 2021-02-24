@@ -7,11 +7,6 @@ var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
-// 1) should create a new file for each todo
-// 2) should use the generated unique id as the filename
-// 3) should only save todo text contents in file
-// ✓ should pass a todo object to the callback on success
-
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, id) => {
     let filePath = path.join(exports.dataDir, `${id}.txt`);
@@ -26,10 +21,14 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  let todos = [];
+  fs.readdir(exports.dataDir, (err, files) => {
+    files.forEach(file => {
+      file = file.slice(0, 5);
+      todos.push({id: file, text: file});
+    });
+    callback(null, todos);
   });
-  callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
