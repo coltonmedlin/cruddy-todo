@@ -20,15 +20,49 @@ exports.create = (text, callback) => {
   });
 };
 
-exports.readAll = (callback) => {
-  let todos = [];
-  fs.readdir(exports.dataDir, (err, files) => {
-    files.forEach(file => {
-      file = file.slice(0, 5);
-      todos.push({id: file, text: file});
+const getFileNames = () => {
+  return new Promise((resolve, reject) => {
+    let todos = [];
+    fs.readdir(exports.dataDir, (err, files) => {
+      if (err) {
+        reject(err);
+      } else {
+        files.forEach(file => {
+          file = file.slice(0, 5);
+          todos.push(file);
+        });
+        resolve(todos);
+      }
     });
-    callback(null, todos);
   });
+};
+
+const getTodo = (file) => {
+  return new Promise((resolve, reject) => {
+    let filePath = path.join(exports.dataDir, `${file}.txt`);
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        let todo = {id: file, text: data};
+        resolve(todo);
+      }
+    });
+  });
+};
+
+exports.readAll = (callback) => {
+  getFileNames()
+    .then((files) => {
+      let promises = files.map(getTodo);
+      Promise.all(promises)
+        .then(todos => {
+          callback(null, todos);
+        })
+        .catch(err => {
+          callback(err);
+        });
+    });
 };
 
 exports.readOne = (id, callback) => {
@@ -41,6 +75,8 @@ exports.readOne = (id, callback) => {
     }
   });
 };
+
+
 
 exports.update = (id, text, callback) => {
   let filePath = path.join(exports.dataDir, `${id}.txt`);
